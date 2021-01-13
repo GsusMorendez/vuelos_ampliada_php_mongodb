@@ -1,16 +1,57 @@
 <?php
 require 'vendor/autoload.php'; // incluir lo bueno de Composer
 
-$cliente = new MongoDB\Client("mongodb://localhost:27017");
-$coleccion = $cliente->vuelos2_0->vuelos;
+$method = $_SERVER['REQUEST_METHOD'];
+$recibido = file_get_contents('php://input');
+$primerCaracter = substr ($recibido,0,1);
+$arrMensajeRespuesta = array();
 
-$resultado = $coleccion->find();
+if($primerCaracter == '{'){ 
+  $_DATA = json_decode($recibido, true);
+    if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"  || $method== "DELETE") && isset($_DATA)){  
+        
+        require 'crud.php';
 
-foreach ($resultado as $entry) {
-    echo $entry['codigo'], ': ', $entry['origen'], ' => ', $entry['destino'],  "\n";
+        switch ($method) {
+            case 'GET':
+                $arrMensajeRespuesta = funcionesGet($_DATA, $conn);
+            break;
+            case 'POST':
+                $arrMensajeRespuesta = funcionesPost($_DATA, $conn);
+            break;
+            case 'PUT':
+                $arrMensajeRespuesta = put($_DATA, $conn);
+            break;
+            case 'DELETE':
+                $arrMensajeRespuesta = delete($_DATA, $conn);                      
+            break;
+            default:
+                $arrMensajeRespuesta = array(
+                    "estado" =>  "KO",
+                    "mensaje" => "Método $method no implementado"
+                );
+            break;
+        }
+
+               
+
+    }else{  
+        $arrMensajeRespuesta = array(
+            "estado" =>  "KO",
+            "mensaje" => "No se puede completar la accion con los datos recibidos"
+        );
+    }
+}else{
+  //parse_str($recibido, $_DATA);
+  $arrMensajeRespuesta = array(
+    "estado" =>  false,
+    "mensaje" => "Se esperaba recibir un objeto JSON, formato recibido erroneo."
+  );
 }
 
-//$resultado = $coleccion->insertOne( [ 'id' => 10, 'origen' => 'BrewDog', 'destino' => 'BrewDog', 'codigo' => 'AA123', 'fecha' => '2020-03-02', 'hora' => '13:02:02', 'plazas_totales' => 250, 'plazas_disponibles' => 50 ] );
 
-//echo "Inserted with Object ID '{$resultado->getInsertedId()}'";
+$mensajeFinalJSON = json_encode($arrMensajeRespuesta, JSON_PRETTY_PRINT);
+echo $mensajeFinalJSON;
+
+
 ?>
