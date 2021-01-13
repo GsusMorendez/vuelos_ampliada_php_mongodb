@@ -1,6 +1,4 @@
 <?php
-require 'vendor/autoload.php'; // incluir lo bueno de Composer
-
 $method = $_SERVER['REQUEST_METHOD'];
 $recibido = file_get_contents('php://input');
 $primerCaracter = substr ($recibido,0,1);
