@@ -6,24 +6,30 @@ $recibido = file_get_contents('php://input');
 $primerCaracter = substr ($recibido,0,1);
 $arrMensajeRespuesta = array();
 
+
+
+//falta añadir el corregir data por si llega mal
+
 if($primerCaracter == '{'){ 
   $_DATA = json_decode($recibido, true);
-    if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"  || $method== "DELETE") && isset($_DATA)){  
-        
-        require 'crud.php';
-
+    if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"  || $method== "DELETE") && isset($_DATA)){
+        require 'conexion.php';
         switch ($method) {
             case 'GET':
-                $arrMensajeRespuesta = funcionesGet($_DATA, $conn);
+                require 'getFunctions.php';
+                $arrMensajeRespuesta = funcionesGet($coleccion);
             break;
             case 'POST':
-                $arrMensajeRespuesta = funcionesPost($_DATA, $conn);
+                require 'postFunctions.php';
+                $arrMensajeRespuesta = funcionesPost($_DATA, $coleccion);
             break;
             case 'PUT':
-                $arrMensajeRespuesta = put($_DATA, $conn);
+                require 'putFunctions.php';
+                $arrMensajeRespuesta = put($_DATA, $coleccion);
             break;
             case 'DELETE':
-                $arrMensajeRespuesta = delete($_DATA, $conn);                      
+                require 'deleteFunctions.php';
+                $arrMensajeRespuesta = delete($_DATA, $coleccion);                      
             break;
             default:
                 $arrMensajeRespuesta = array(
