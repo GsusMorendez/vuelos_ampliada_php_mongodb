@@ -1,5 +1,5 @@
 <?php
-<<<<<<< HEAD
+
 require 'vendor/autoload.php'; // incluir lo bueno de Composer
 
 $arrMensajeRespuesta = array();
