@@ -20,7 +20,10 @@ if($primerCaracter == '{'){
 
 $_DATA['codigo'] = $_GET['codigo'];
 $_DATA['dni'] = $_GET['dni'];
-$_DATA['codigoVenta'] = $_GET['codigoVenta'];
+$_DATA['nombre'] = $_GET['nombre'];
+$_DATA['apellido'] = $_GET['apellido'];
+$_DATA['dniPagador'] = $_GET['dniPagador'];
+$_DATA['tarjeta'] = $_GET['tarjeta'];
 
 
 
