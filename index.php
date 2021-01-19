@@ -1,6 +1,4 @@
 <?php
-require 'vendor/autoload.php'; // incluir lo bueno de Composer
-
 $method = $_SERVER['REQUEST_METHOD'];
 $recibido = file_get_contents('php://input');
 $primerCaracter = substr ($recibido,0,1);
@@ -18,13 +16,13 @@ if($primerCaracter == '{'){
 }
 
 
+
 $_DATA['codigo'] = $_GET['codigo'];
 $_DATA['dni'] = $_GET['dni'];
 $_DATA['nombre'] = $_GET['nombre'];
 $_DATA['apellido'] = $_GET['apellido'];
 $_DATA['dniPagador'] = $_GET['dniPagador'];
 $_DATA['tarjeta'] = $_GET['tarjeta'];
-
 
 
 if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"  || $method== "DELETE") && isset($_DATA)){
