@@ -16,12 +16,6 @@ if($primerCaracter == '{'){
 }
 
 
-$_DATA['codigo'] = $_GET['codigo'];
-$_DATA['dni'] = $_GET['dni'];
-$_DATA['codigoVenta'] = $_GET['codigoVenta'];
-
-
-
 if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"  || $method== "DELETE") && isset($_DATA)){
     require 'conexion.php';
     switch ($method) {
