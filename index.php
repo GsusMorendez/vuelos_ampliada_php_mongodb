@@ -25,7 +25,27 @@ $_DATA['asiento'] = $_GET['asiento'];
 //$_DATA['tarjeta'] = $_GET['tarjeta'];*/
 
 
-if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"||$method== "DELETE") && isset($_DATA)){
+
+/*
+$_DATA['origen'] = $_GET['origen'];
+$_DATA['fecha'] = $_GET['fecha'];
+
+
+
+$_DATA['destino'] = $_GET['destino'];
+
+$_DATA['codigo'] = $_GET['codigo'];
+$_DATA['dni'] = $_GET['dni'];
+$_DATA['codigoVenta'] = $_GET['codigoVenta'];
+$_DATA['nombre'] = $_GET['nombre'];
+$_DATA['apellido'] = $_GET['apellido'];
+$_DATA['dniPagador'] = $_GET['dniPagador'];
+$_DATA['tarjeta'] = $_GET['tarjeta'];
+*/
+
+
+if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"  || $method== "DELETE") && isset($_DATA)){
+
     require 'conexion.php';
     switch ($method) {
         case 'GET':
@@ -61,8 +81,8 @@ if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"||$
 
 
 
-$mensajeFinalJSON = json_encode($arrMensajeRespuesta, JSON_PRETTY_PRINT);
-echo $mensajeFinalJSON;
+// $mensajeFinalJSON = json_encode($arrMensajeRespuesta, JSON_PRETTY_PRINT);
+// echo $mensajeFinalJSON;
 
 
 ?>
