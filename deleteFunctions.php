@@ -2,9 +2,9 @@
 
 function delete($DATA, $coleccion){
     $arrMensaje = array();   
-    
-    if (isset($DATA['codigo']) && isset($DATA['dni'])  && isset($DATA['codigoVenta']) ) {
-       
+
+    if (isset($DATA['codigo']) && isset($DATA['dni'])  && isset($DATA['codigoVenta'])) {
+
         $codigo = $DATA['codigo'];
         $dni = $DATA['dni'];
         $codigoVenta = $DATA['codigoVenta'];        

@@ -12,11 +12,20 @@ if($primerCaracter == '{'){
     $_DATA = json_decode($recibido, true);
     
 }else{
-    parse_str( $recibido, $_DATA);
+    parse_str($recibido, $_DATA);
 }
 
+$_DATA['codigo'] = $_GET['codigo'];
+$_DATA['dni'] = $_GET['dni'];
+$_DATA['codigoVenta'] = $_GET['codigoVenta'];
+$_DATA['nombre'] = $_GET['nombre'];
+$_DATA['apellido'] = $_GET['apellido'];
+$_DATA['dniPagador'] = $_GET['dniPagador'];
+$_DATA['asiento'] = $_GET['asiento'];
+//$_DATA['tarjeta'] = $_GET['tarjeta'];*/
 
-if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"  || $method== "DELETE") && isset($_DATA)){
+
+if(isset($method) && ($method == "GET" ||$method == "POST" ||$method == "PUT"||$method== "DELETE") && isset($_DATA)){
     require 'conexion.php';
     switch ($method) {
         case 'GET':
