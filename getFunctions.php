@@ -6,19 +6,42 @@ $arrMensajeRespuesta = array();
 
 function funcionesGet($coleccion){
 
-
     if(!isset($_GET['fecha']) && !isset($_GET['origen']) && !isset($_GET['destino'])){
-        echo "TODOS MIS VUELOS";
-        mostrarTodos($coleccion);         
+        //echo "TODOS MIS VUELOS";
+        $mensajeJSON = mostrarTodos($coleccion);        
+        
     } else if(!isset($_GET['destino'])){
-        echo "VUELOS POR FECHA Y ORIGEN";
+        //echo "VUELOS POR FECHA Y ORIGEN";
         $arrayParametros = array("fecha" => $_GET['fecha'], "origen" => $_GET['origen']);
-        busquedaPorFiltros($coleccion, $arrayParametros);
+        $busqueda = busquedaPorFiltros($coleccion, $arrayParametros);
+        $mensajeJSON = json_decode($busqueda, true);      
+        for ($i=0; $i < count($mensajeJSON['vuelos']) ; $i++) { 
+            array_splice($mensajeJSON['vuelos'][$i], 7);
+        }
+        $mensajeJSON = json_encode($mensajeJSON, JSON_PRETTY_PRINT);
+        
+
+
     } else{
-        echo "VUELOS POR FECHA, ORIGEN Y DESTINO";
+        //echo "VUELOS POR FECHA, ORIGEN Y DESTINO";
         $arrayParametros = array("fecha" => $_GET['fecha'], "origen" => $_GET['origen'],"destino" => $_GET['destino']);
-        busquedaPorFiltros($coleccion, $arrayParametros);
+        $busqueda = busquedaPorFiltros($coleccion, $arrayParametros);
+        //var_dump($busqueda);
+        //echo gettype($busqueda);
+
+        $mensajeJSON = json_decode($busqueda, true);      
+        for ($i=0; $i < count($mensajeJSON['vuelos']) ; $i++) { 
+            array_splice($mensajeJSON['vuelos'][$i], 7);
+        }
+        $mensajeJSON = json_encode($mensajeJSON, JSON_PRETTY_PRINT);
+        //var_dump($mensajeJSON);
     }
+
+    
+    echo $mensajeJSON;   
+
+
+    
 
 }
 
@@ -28,7 +51,6 @@ function mostrarTodos($coleccion){
 
     $contador = 0;
     $resultado = $coleccion->find();
-
     $misVuelos= array();
    
     foreach ($resultado as $entry) {
@@ -43,36 +65,21 @@ function mostrarTodos($coleccion){
         //$vuelo['precio'] = $entry['precio'];
         $misVuelos[] =  $vuelo;
     
-        $contador++;
-       
-       
+        $contador++;          
     } 
 
     if($contador == 0){
-
-        echo "<pre>";  // Descomentar si se quiere ver resultado "bonito" en navegador. Solo para pruebas
         $arrMensaje["estado"] = false;
-        $arrMensaje["encontrados"] = $contador;
-      
-    
-        $mensajeJSON = json_encode($arrMensaje,JSON_PRETTY_PRINT);
-        echo $mensajeJSON;
-        echo "<pre>";  // Descomentar si se quiere ver resultado "bonito" en navegador. Solo para pruebas
+        $arrMensaje["encontrados"] = $contador;     
 
     }else{
-        echo "<pre>";  // Descomentar si se quiere ver resultado "bonito" en navegador. Solo para pruebas
         $arrMensaje["estado"] = true;
         $arrMensaje["encontrados"] = $contador;
-        $arrMensaje["vuelos"] = $misVuelos;
-    
-        $mensajeJSON = json_encode($arrMensaje,JSON_PRETTY_PRINT);
-        echo $mensajeJSON;
-        echo "<pre>";  // Descomentar si se quiere ver resultado "bonito" en navegador. Solo para pruebas
+        $arrMensaje["vuelos"] = $misVuelos;    
     }
 
-
-
-
+    $mensajeJSON = json_encode($arrMensaje,JSON_PRETTY_PRINT);
+    return $mensajeJSON;
 }
 
 function busquedaPorFiltros($coleccion, $arrayParametros){
@@ -82,7 +89,9 @@ function busquedaPorFiltros($coleccion, $arrayParametros){
     $misVuelos= array();
     $contador = 0;
     
+    
     foreach ($resultado as $entry) {
+
         $vuelo = array();
         $vuelo['codigo'] = $entry['codigo'];
         $vuelo['origen'] = $entry['origen'];
@@ -91,41 +100,44 @@ function busquedaPorFiltros($coleccion, $arrayParametros){
         $vuelo['hora'] = $entry['hora'];
         $vuelo['plazas_totales'] = $entry['plazas_totales'];
         $vuelo['plazas_disponibles'] = $entry['plazas_disponibles'];
+        
+        if (isset($entry['asientos_libres'])) {
+            $vuelo['asientos_libres'] = $entry['asientos_libres'];
+            $vuelo['vendidos'] = $entry['vendidos'];
+        }
+
+        
+         
+        
+      
+        
+        
+
         //$vuelo['precio'] = $entry['precio'];
         $misVuelos[] =  $vuelo;
-    
-        $contador++;
-       
-       
+        $contador++;      
     } 
 
     if($contador == 0){
         
-        echo "<pre>";  // Descomentar si se quiere ver resultado "bonito" en navegador. Solo para pruebas
         $arrMensaje["estado"] = false;
         $arrMensaje["encontrados"] = $contador;
-        if(isset($arrayParametros['destino'])){
+
+       if(isset($arrayParametros['destino'])){
             $arrMensaje["busqueda"] = array(
                 "fecha"=> $_GET['fecha'],
                 "origen" =>$_GET['origen'],
                 "destino"=> $_GET['destino']
             );
 
-        }else{
+        }else if(isset($arrayParametros['fecha'])){
             $arrMensaje["busqueda"] = array(
                 "fecha"=> $_GET['fecha'],
                 "origen" =>$_GET['origen']
-              
             );
-
         }     
     
-        $mensajeJSON = json_encode($arrMensaje,JSON_PRETTY_PRINT);
-        echo $mensajeJSON;
-        echo "<pre>";  // Descomentar si se quiere ver resultado "bonito" en navegador. Solo para pruebas
-
     }else{
-        echo "<pre>";  // Descomentar si se quiere ver resultado "bonito" en navegador. Solo para pruebas
         $arrMensaje["estado"] = true;
         $arrMensaje["encontrados"] = $contador;
 
@@ -136,21 +148,18 @@ function busquedaPorFiltros($coleccion, $arrayParametros){
                 "destino"=> $_GET['destino']
             );
 
-        }else{
+        }else if(isset($arrayParametros['fecha'])){
             $arrMensaje["busqueda"] = array(
                 "fecha"=> $_GET['fecha'],
                 "origen" =>$_GET['origen']
               
             );
-
         }     
-        
-        $arrMensaje["vuelos"] = $misVuelos;
-    
-        $mensajeJSON = json_encode($arrMensaje,JSON_PRETTY_PRINT);
-        echo $mensajeJSON;
-        echo "<pre>";  // Descomentar si se quiere ver resultado "bonito" en navegador. Solo para pruebas
+        $arrMensaje["vuelos"] = $misVuelos;  
     }
+
+    $mensajeJSON = json_encode($arrMensaje,JSON_PRETTY_PRINT);
+    return $mensajeJSON;
     
 }
 
