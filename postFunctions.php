@@ -1,8 +1,5 @@
 <?php
-
 require 'getFunctions.php';
-
-
 
 function funcionesPost($DATA, $coleccion){
 
@@ -37,10 +34,6 @@ function insertOne($DATA, $coleccion){
             $infoVuelo = $jsonResponse['vuelos'];  
             $vuelo = $infoVuelo[0];
             $nuevoNumPlazas = $vuelo['plazas_disponibles'] - 1;
-   
-            
-            
-
 
             if ($vuelo['plazas_disponibles'] > 0) {
 
@@ -106,7 +99,7 @@ function insertOne($DATA, $coleccion){
     
         $jsonstring = json_encode($arrMensaje, JSON_PRETTY_PRINT);
         echo $jsonstring;
-        die();
+        
 
 }
 
@@ -121,4 +114,102 @@ function generarCodigo(){
     return strtoupper($parteLetras).$parteNumerica;   
 }
 
+function insertMany($DATA, $coleccion){
+
+    
+    $arrMensaje = array();  
+        
+    //var_dump($DATA);
+    
+    if (isset($DATA['codigo']) && isset($DATA['dniPagador']) && isset($DATA['tarjeta']) && isset($DATA['datosViajeros'])) {
+        $codigo = $DATA['codigo'];
+        $dniPagador = $DATA['dniPagador'];
+        $tarjeta = $DATA['tarjeta'];
+        $datosViajeros = $DATA['datosViajeros']; 
+       
+        $arrayParametros = array("codigo" => $codigo);
+        $getResponse = busquedaPorFiltros($coleccion, $arrayParametros); 
+        $jsonResponse = json_decode($getResponse, true); 
+        $infoVuelo = $jsonResponse['vuelos'];  
+        $vuelo = $infoVuelo[0];
+       
+        $pasajeros = array();
+     
+        if ($vuelo['plazas_disponibles'] > 0) {
+
+            $countAsiento = 0;
+            for ($i=0; $i < count($datosViajeros) ; $i++) { 
+                $codigoVenta = generarCodigo();
+
+                if (!isset($vuelo['asientos_libres']) && $i == 0) {
+                    $asientoAsginado = 1;
+                    $countAsiento = $asientoAsginado; 
+
+                }else if(isset($vuelo['asientos_libres']) && $i == 0){
+                    $asientos = $vuelo['asientos_libres'];
+                    $asientoAsginado = $asientos[0];
+                    $countAsiento = $asientoAsginado; 
+                }else{
+                    $asientoAsginado = $countAsiento + 1;
+                }
+
+                $pasajero = array('asiento' => $asientoAsginado, 'dni' => $datosViajeros[$i][0], 'apellido'=> $datosViajeros[$i][1],'nombre'=> $datosViajeros[$i][2],  'dniPagador'=> $dniPagador, 'tarjeta'=> $tarjeta, 'codigoVenta'=> $codigoVenta);
+                $pasajeros[] = $pasajero;
+    
+            }
+
+            $asientoDelUltimoPasajero = $pasajeros[count($datosViajeros)-1]['asiento'];          
+
+            for ($i=$asientoDelUltimoPasajero+1; $i <= $vuelo['plazas_totales'] ; $i++) { 
+                $asientosRestantes[] = $i;
+            }         
+
+            
+            $updateResult = $coleccion->updateMany(
+                array('codigo' => $codigo),
+                array(
+                     '$set'=> array('vendidos' => $pasajeros)
+                ),
+                array('multi' => true)
+            );       
+            $nuevoNumPlazas = ($vuelo['plazas_disponibles'] - count($datosViajeros));          
+            
+            $updateResultDos = $coleccion->updateOne(
+                array('codigo' => $codigo),
+                array(
+                     '$set'=> array('plazas_disponibles' =>  $nuevoNumPlazas, 'asientos_libres' => $asientosRestantes)
+                     )
+            ); 
+            $arrMensaje["estado"] = true;
+            $arrMensaje["codigo"] = $codigo;
+            $arrMensaje["origen"] = $vuelo['origen'];
+            $arrMensaje["destino"] = $vuelo['destino'];
+            $arrMensaje["fecha"] = $vuelo['codigo'];
+            $arrMensaje["hora"] = $vuelo['hora'];
+            $arrMensaje["dniPagador"] = $dniPagador;
+            $arrMensaje["tarjeta"] = $tarjeta;
+            $arrMensaje["codigoVenta"] = $codigoVenta;
+            $arrMensaje["datosBilletes"] = $pasajeros;
+        } else {
+            $arrMensaje["estado"] = false;
+            $arrMensaje["mensaje"] = "Actualmente no existen plazas disponibles para ese vuelo";
+        }       
+      
+        // printf("Modified %d document(s)\n", $updateResult->getModifiedCount());
+        // printf("matched %d document(s)\n", $updateResult->getMatchedCount());      
+
+    
+    } else {
+        $arrMensaje["estado"] = false;
+        $arrMensaje["mensaje"] = 'No se ha podido realizar la compra porque algun dato ingresado es incorrecto';
+        $arrMensaje["esperado"] = array('codigo' => 'IB706' , 'dniPagador' => '44556677H' , 'tajeta' => '038 0025 5553 5553', 'datosViajeros' => array('dni' => '05554525A' , 'apellido' => 'Rodriguez' , 'nombre' => 'Alejandra'));
+        $arrMensaje["recibido"] = $DATA;
+    
+    }
+
+    $jsonstring = json_encode($arrMensaje, JSON_PRETTY_PRINT);
+    echo $jsonstring;
+  
+
+}
 ?>
