@@ -7,7 +7,7 @@ require 'getFunctions.php';
 function funcionesPost($DATA, $coleccion){
 
     if (isset($DATA['datosViajeros'])) {
-       
+       insertMany($DATA, $coleccion);
     }else {
         
         insertOne($DATA, $coleccion);        
@@ -21,7 +21,7 @@ function insertOne($DATA, $coleccion){
         
         //var_dump($DATA);
         
-        if (isset($DATA['codigo']) && isset($DATA['dni'])  && isset($DATA['nombre']) && isset($DATA['apellido']) && isset($DATA['tarjeta']) && isset($DATA['dniPagador'])  ) {
+        if (isset($DATA['codigo']) && isset($DATA['dni']) && isset($DATA['nombre']) && isset($DATA['apellido']) && isset($DATA['tarjeta']) && isset($DATA['dniPagador'])  ) {
            
             $codigo = $DATA['codigo'];
             $dni = $DATA['dni'];
@@ -113,6 +113,8 @@ function generarCodigo(){
     
 
 }
+
+
 
 
 
