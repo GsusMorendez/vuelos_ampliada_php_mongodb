@@ -33,30 +33,42 @@ function insertOne($DATA, $coleccion){
 
             $arrayParametros = array("codigo" => $codigo);
             $getResponse = busquedaPorFiltros($coleccion, $arrayParametros); 
-            //echo gettype($getResponse); 
-            //var_dump( $getResponse);
             $jsonResponse = json_decode($getResponse, true); 
             $infoVuelo = $jsonResponse['vuelos'];  
-            $vuelo = $infoVuelo[0];       
-            /*var_dump($infoVuelo); 
-            var_dump($infoVuelo[0]);
-            echo $infoVuelo[0]['codigo'];*/
+            $vuelo = $infoVuelo[0];
+            $nuevoNumPlazas = $vuelo['plazas_disponibles'] - 1;
+   
+            
+            
+
 
             if ($vuelo['plazas_disponibles'] > 0) {
-                $asientos = $vuelo['asientos_libres'];
+
+                if (isset($vuelo['asientos_libres'])) {
+                    $asientos = $vuelo['asientos_libres'];
+                    $asientoAsginado = $asientos[0];
+                    $asientosRestantes = array_splice($asientos, 1);
+               
+                }else{
+                    $asientoAsginado = 1;
+                    $asientosRestantes = array();
+                    for ($i=2; $i <= $vuelo['plazas_totales'] ; $i++) { 
+                        $asientosRestantes[] = $i;
+                    }
+                }
+
+                
                 $updateResult = $coleccion->updateOne(
                     array('codigo' => $codigo),
                     array(
-                         '$push'=> array('vendidos' => array('asiento' => $asientos[0], 'dni' => $dni, 'apellido'=> $apellido,'nombre'=> $nombre,  'dniPagador'=> $dniPagador, 'tarjeta'=> $tarjeta, 'codigoVenta'=> $codigoVenta))
+                         '$push'=> array('vendidos' => array('asiento' => $asientoAsginado, 'dni' => $dni, 'apellido'=> $apellido,'nombre'=> $nombre,  'dniPagador'=> $dniPagador, 'tarjeta'=> $tarjeta, 'codigoVenta'=> $codigoVenta))
                          )
-                ); 
-
-                $asientosRestantes = array_splice($asientos, 1);
+                );                 
                 
                 $updateResultDos = $coleccion->updateOne(
                     array('codigo' => $codigo),
                     array(
-                         '$set'=> array('plazas_disponibles' => ($vuelo['plazas_disponibles']-1), 'asientos_libres' => $asientosRestantes)
+                         '$set'=> array('plazas_disponibles' =>  $nuevoNumPlazas, 'asientos_libres' => $asientosRestantes)
                          )
                 ); 
                 $arrMensaje["estado"] = true;
@@ -100,25 +112,13 @@ function insertOne($DATA, $coleccion){
 
 
 function generarCodigo(){
-
     $parteNumerica = random_int(1000, 999999);
     $cuantasLetras = random_int(1, 4);
     $parteLetras = "";
-
     for ($i=0; $i < $cuantasLetras; $i++) { 
         $parteLetras .= chr(rand(ord("a"), ord("z")));
     }
-
-    return strtoupper($parteLetras).$parteNumerica;
-    
-
+    return strtoupper($parteLetras).$parteNumerica;   
 }
-
-
-
-
-
-
-
 
 ?>
