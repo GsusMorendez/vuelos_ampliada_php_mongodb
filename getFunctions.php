@@ -49,8 +49,17 @@ function funcionesGet($coleccion){
 
 function mostrarTodos($coleccion){
 
+ 
+    try {
+        $resultado = $coleccion->find();
+    } catch (Exception $e) {
+        $arrMensaje["estado"] = false;
+        $arrMensaje["mensaje"] = "Error al conectarse a mongodb";
+        $mensajeJSON = json_encode($arrMensaje,JSON_PRETTY_PRINT);
+        return $mensajeJSON; 
+        die();
+    }
     $contador = 0;
-    $resultado = $coleccion->find();
     $misVuelos= array();
    
     foreach ($resultado as $entry) {
@@ -62,7 +71,7 @@ function mostrarTodos($coleccion){
         $vuelo['hora'] = $entry['hora'];
         $vuelo['plazas_totales'] = $entry['plazas_totales'];
         $vuelo['plazas_disponibles'] = $entry['plazas_disponibles'];
-        //$vuelo['precio'] = $entry['precio'];
+        $vuelo['costeBillete'] = $entry['costeBillete'];
         $misVuelos[] =  $vuelo;
     
         $contador++;          
@@ -100,19 +109,14 @@ function busquedaPorFiltros($coleccion, $arrayParametros){
         $vuelo['hora'] = $entry['hora'];
         $vuelo['plazas_totales'] = $entry['plazas_totales'];
         $vuelo['plazas_disponibles'] = $entry['plazas_disponibles'];
+        $vuelo['costeBillete'] = $entry['costeBillete'];
+
         
         if (isset($entry['asientos_libres'])) {
             $vuelo['asientos_libres'] = $entry['asientos_libres'];
             $vuelo['vendidos'] = $entry['vendidos'];
         }
-
-        
          
-        
-      
-        
-        
-
         //$vuelo['precio'] = $entry['precio'];
         $misVuelos[] =  $vuelo;
         $contador++;      

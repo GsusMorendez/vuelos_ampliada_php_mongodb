@@ -36,11 +36,7 @@ function insertOne($DATA, $coleccion){
             $jsonResponse = json_decode($getResponse, true); 
             $infoVuelo = $jsonResponse['vuelos'];  
             $vuelo = $infoVuelo[0];
-            $nuevoNumPlazas = $vuelo['plazas_disponibles'] - 1;
-   
-            
-            
-
+            $nuevoNumPlazas = $vuelo['plazas_disponibles'] - 1;       
 
             if ($vuelo['plazas_disponibles'] > 0) {
 
@@ -57,7 +53,6 @@ function insertOne($DATA, $coleccion){
                     }
                 }
 
-                
                 $updateResult = $coleccion->updateOne(
                     array('codigo' => $codigo),
                     array(
@@ -85,9 +80,10 @@ function insertOne($DATA, $coleccion){
                 $arrMensaje["destino"] = $vuelo['destino'];
                 $arrMensaje["fecha"] = $vuelo['codigo'];
                 $arrMensaje["hora"] = $vuelo['hora'];
+                $arrMensaje["costeBillete"] = $jsonResponse['vuelos']['0']['costeBillete'];              
+
                 //$arrMensaje["asientos_libres"] = $vuelo['asientos_libres'];
                 //$arrMensaje["asiento"] = $vuelo['asiento'];
-                //$arrMensaje["costeBillete"] = $precio;
             } else {
                 $arrMensaje["estado"] = false;
                 $arrMensaje["mensaje"] = "Actualmente no existen plazas disponibles para ese vuelo";
@@ -106,7 +102,7 @@ function insertOne($DATA, $coleccion){
     
         $jsonstring = json_encode($arrMensaje, JSON_PRETTY_PRINT);
         echo $jsonstring;
-        die();
+        
 
 }
 

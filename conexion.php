@@ -1,7 +1,15 @@
 <?php
-require 'vendor/autoload.php'; // incluir lo bueno de Composer
+require 'vendor/autoload.php'; 
 
-$cliente = new MongoDB\Client("mongodb://localhost:27017");
-$coleccion = $cliente->vuelos2_0->vuelos;
+try {
+    $cliente = new MongoDB\Client("mongodb://localhost:27017");
+    $coleccion = $cliente->vuelos2_0->vuelos;
+} catch (Exception $e) {
+    //echo 'Excepción capturada: ',  $e->getMessage(), "\n";
+    echo "error";
+    die();
+}
+
+
 
 ?>
