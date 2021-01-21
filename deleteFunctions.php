@@ -35,7 +35,7 @@ function delete($DATA, $coleccion){
             
         } else {
             $arrMensaje["estado"] = false;
-            $arrMensaje["mensaje"] = 'los datos no coinciden con ningun vuelo.';
+            $arrMensaje["mensaje"] = 'los datos no coinciden con ningun billete.';
         }    
 
     } else {

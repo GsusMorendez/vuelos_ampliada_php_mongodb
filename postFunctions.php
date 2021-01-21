@@ -6,16 +6,13 @@ function funcionesPost($DATA, $coleccion){
     if (isset($DATA['datosViajeros'])) {
        insertMany($DATA, $coleccion);
     }else {
-        
         insertOne($DATA, $coleccion);        
     }
 }
 
 function insertOne($DATA, $coleccion){
-    
         $arrMensaje = array();  
         //var_dump($DATA);
-        
         if (isset($DATA['codigo']) && isset($DATA['dni']) && isset($DATA['nombre']) && isset($DATA['apellido']) && isset($DATA['tarjeta']) && isset($DATA['dniPagador'])  ) {
            
             $codigo = $DATA['codigo'];
@@ -69,7 +66,6 @@ function insertOne($DATA, $coleccion){
                 $arrMensaje["codigoVenta"] = $codigoVenta;
                 $arrMensaje["tarjeta"] = $tarjeta;
                 $arrMensaje["dniPagador"] = $dniPagador;
-    
                 
                 $arrMensaje["origen"] = $vuelo['origen'];
                 $arrMensaje["destino"] = $vuelo['destino'];
@@ -83,24 +79,17 @@ function insertOne($DATA, $coleccion){
                 $arrMensaje["estado"] = false;
                 $arrMensaje["mensaje"] = "Actualmente no existen plazas disponibles para ese vuelo";
             }       
-          
             // printf("Modified %d document(s)\n", $updateResult->getModifiedCount());
             // printf("matched %d document(s)\n", $updateResult->getMatchedCount());        
-    
         } else {
             $arrMensaje["estado"] = false;
             $arrMensaje["mensaje"] = 'Alguno de los datos enviados necesarios para borrar no han se han enviado correctamente';
             $arrMensaje["esperado"] = array('codigo' => 'IB706' , 'dni' => '44556677H' , 'nombre' => 'Antonio', 'apellido' => 'Garcia', 'dniPagador' => '51202368C', 'tarjeta' => '038 0025 5553 5553');
             $arrMensaje["recibido"] = $DATA;
-        
         }
-    
         $jsonstring = json_encode($arrMensaje, JSON_PRETTY_PRINT);
         echo $jsonstring;
-        
-
 }
-
 
 function generarCodigo(){
     $parteNumerica = random_int(1000, 999999);
@@ -113,10 +102,7 @@ function generarCodigo(){
 }
 
 function insertMany($DATA, $coleccion){
-
-    
     $arrMensaje = array();  
-        
     //var_dump($DATA);
     
     if (isset($DATA['codigo']) && isset($DATA['dniPagador']) && isset($DATA['tarjeta']) && isset($DATA['datosViajeros'])) {
@@ -130,7 +116,6 @@ function insertMany($DATA, $coleccion){
         $jsonResponse = json_decode($getResponse, true); 
         $infoVuelo = $jsonResponse['vuelos'];  
         $vuelo = $infoVuelo[0];
-       
         $pasajeros = array();
      
         if ($vuelo['plazas_disponibles'] > 0) {
@@ -150,18 +135,14 @@ function insertMany($DATA, $coleccion){
                 }else{
                     $asientoAsginado = $countAsiento + 1;
                 }
-
                 $pasajero = array('asiento' => $asientoAsginado, 'dni' => $datosViajeros[$i][0], 'apellido'=> $datosViajeros[$i][1],'nombre'=> $datosViajeros[$i][2],  'dniPagador'=> $dniPagador, 'tarjeta'=> $tarjeta, 'codigoVenta'=> $codigoVenta);
                 $pasajeros[] = $pasajero;
-    
             }
-
             $asientoDelUltimoPasajero = $pasajeros[count($datosViajeros)-1]['asiento'];          
 
             for ($i=$asientoDelUltimoPasajero+1; $i <= $vuelo['plazas_totales'] ; $i++) { 
                 $asientosRestantes[] = $i;
             }         
-
             
             $updateResult = $coleccion->updateMany(
                 array('codigo' => $codigo),
@@ -195,20 +176,15 @@ function insertMany($DATA, $coleccion){
             $arrMensaje["estado"] = false;
             $arrMensaje["mensaje"] = "Actualmente no existen plazas disponibles para ese vuelo";
         }       
-      
         // printf("Modified %d document(s)\n", $updateResult->getModifiedCount());
         // printf("matched %d document(s)\n", $updateResult->getMatchedCount());      
-
     } else {
         $arrMensaje["estado"] = false;
         $arrMensaje["mensaje"] = 'No se ha podido realizar la compra porque algun dato ingresado es incorrecto';
         $arrMensaje["esperado"] = array('codigo' => 'IB706' , 'dniPagador' => '44556677H' , 'tajeta' => '038 0025 5553 5553', 'datosViajeros' => array('dni' => '05554525A' , 'apellido' => 'Rodriguez' , 'nombre' => 'Alejandra'));
         $arrMensaje["recibido"] = $DATA;
     }
-
     $jsonstring = json_encode($arrMensaje, JSON_PRETTY_PRINT);
     echo $jsonstring;
-  
-
 }
 ?>

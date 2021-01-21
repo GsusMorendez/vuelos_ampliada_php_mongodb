@@ -10,31 +10,38 @@ function funcionesGet($coleccion){
         //echo "TODOS MIS VUELOS";
         $mensajeJSON = mostrarTodos($coleccion);        
         
-    } else if(!isset($_GET['destino'])){
+    } else if(!isset($_GET['destino']) && isset($_GET['origen']) && isset($_GET['fecha']) ){
         //echo "VUELOS POR FECHA Y ORIGEN";
-        $arrayParametros = array("fecha" => $_GET['fecha'], "origen" => $_GET['origen']);
+        $arrayParametros = array("fecha" => $_GET['fecha'], "origen" => strtoupper ( $_GET['origen'] ) );
         $busqueda = busquedaPorFiltros($coleccion, $arrayParametros);
-        $mensajeJSON = json_decode($busqueda, true);      
-        for ($i=0; $i < count($mensajeJSON['vuelos']) ; $i++) { 
-            array_splice($mensajeJSON['vuelos'][$i], 7);
+        $mensajeJSON = json_decode($busqueda, true);
+
+        if ($mensajeJSON['estado'] == true && $mensajeJSON['encontrados'] > 0) { 
+            for ($i=0; $i < count($mensajeJSON['vuelos']) ; $i++) { 
+                array_splice($mensajeJSON['vuelos'][$i], 7);
+            }
         }
-        $mensajeJSON = json_encode($mensajeJSON, JSON_PRETTY_PRINT);
-        
 
+        $mensajeJSON = json_encode($mensajeJSON, JSON_PRETTY_PRINT);    
 
-    } else{
+    } else if(isset($_GET['destino']) && isset($_GET['origen']) && isset($_GET['fecha']) ){
         //echo "VUELOS POR FECHA, ORIGEN Y DESTINO";
-        $arrayParametros = array("fecha" => $_GET['fecha'], "origen" => $_GET['origen'],"destino" => $_GET['destino']);
+        $arrayParametros = array("fecha" => $_GET['fecha'], "origen" => strtoupper ( $_GET['origen'] ),"destino" => strtoupper ( $_GET['destino'] ));
         $busqueda = busquedaPorFiltros($coleccion, $arrayParametros);
-        //var_dump($busqueda);
-        //echo gettype($busqueda);
-
-        $mensajeJSON = json_decode($busqueda, true);      
-        for ($i=0; $i < count($mensajeJSON['vuelos']) ; $i++) { 
-            array_splice($mensajeJSON['vuelos'][$i], 7);
+        $mensajeJSON = json_decode($busqueda, true);  
+        if ($mensajeJSON['estado'] == true && $mensajeJSON['encontrados'] > 0) { 
+            for ($i=0; $i < count($mensajeJSON['vuelos']) ; $i++) { 
+                array_splice($mensajeJSON['vuelos'][$i], 7);
+            }
         }
+        
         $mensajeJSON = json_encode($mensajeJSON, JSON_PRETTY_PRINT);
         //var_dump($mensajeJSON);
+    }else if (!isset($_GET['origen']) || !isset($_GET['fecha'])){
+
+        $mensajeJSON["estado"] = false;
+        $mensajeJSON["mensaje"] = "Faltan parametros, se necesitan al menos el origen y la fecha para realizar una búsqueda, o limpie el formulario para mostrar todos los vuelos";   
+        $mensajeJSON = json_encode($mensajeJSON, JSON_PRETTY_PRINT);
     }
 
     
@@ -124,10 +131,10 @@ function busquedaPorFiltros($coleccion, $arrayParametros){
 
     if($contador == 0){
         
-        $arrMensaje["estado"] = false;
+        $arrMensaje["estado"] = true;
         $arrMensaje["encontrados"] = $contador;
 
-       if(isset($arrayParametros['destino'])){
+        if(isset($arrayParametros['destino'])){
             $arrMensaje["busqueda"] = array(
                 "fecha"=> $_GET['fecha'],
                 "origen" =>$_GET['origen'],
@@ -139,7 +146,9 @@ function busquedaPorFiltros($coleccion, $arrayParametros){
                 "fecha"=> $_GET['fecha'],
                 "origen" =>$_GET['origen']
             );
-        }     
+        }   
+
+  
     
     }else{
         $arrMensaje["estado"] = true;

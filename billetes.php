@@ -15,11 +15,19 @@ if($primerCaracter == '{'){
     parse_str($recibido, $_DATA);
 }
 
+/*$_DATA['codigo'] = $_GET['codigo'];
+$_DATA['dni'] = $_GET['dni'];
+$_DATA['dniNuevo'] = $_GET['dniNuevo'];
+$_DATA['nombre'] = $_GET['nombre'];
+$_DATA['apellido'] = $_GET['apellido'];
+$_DATA['codigoVenta'] = $_GET['codigoVenta'];*/
 
 
 /*
-$_DATA['codigo'] = $_GET['codigo'];
-//$_DATA['dni'] = $_GET['dni'];
+$_DATA['origen'] = $_GET['origen'];
+$_DATA['fecha'] = $_GET['fecha'];
+
+
 //$_DATA['codigoVenta'] = $_GET['codigoVenta'];
 $_DATA['tarjeta'] = $_GET['tarjeta'];
 //$_DATA['nombre'] = $_GET['nombre'];
