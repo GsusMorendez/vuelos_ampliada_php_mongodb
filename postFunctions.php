@@ -1,8 +1,11 @@
 <?php
 require 'getFunctions.php';
 
-function funcionesPost($DATA, $coleccion){
 
+
+
+function funcionesPost($DATA, $coleccion){
+    
     if (isset($DATA['datosViajeros'])) {
        insertMany($DATA, $coleccion);
     }else {
@@ -51,12 +54,15 @@ function insertOne($DATA, $coleccion){
                 }
 
                 
-                $updateResult = $coleccion->updateOne(
-                    array('codigo' => $codigo),
-                    array(
-                         '$push'=> array('vendidos' => array('asiento' => $asientoAsginado, 'dni' => $dni, 'apellido'=> $apellido,'nombre'=> $nombre,  'dniPagador'=> $dniPagador, 'tarjeta'=> $tarjeta, 'codigoVenta'=> $codigoVenta))
-                         )
-                );                 
+           
+                    $updateResult = $coleccion->updateOne(
+                        array('codigo' => $codigo),
+                        array(
+                             '$push'=> array('vendidos' => array('asiento' => $asientoAsginado, 'dni' => $dni, 'apellido'=> $apellido,'nombre'=> $nombre,  'dniPagador'=> $dniPagador, 'tarjeta'=> $tarjeta, 'codigoVenta'=> $codigoVenta))
+                             )
+                    );            
+                
+     
                 
                 $updateResultDos = $coleccion->updateOne(
                     array('codigo' => $codigo),
@@ -165,13 +171,15 @@ function insertMany($DATA, $coleccion){
             }         
 
             
-            $updateResult = $coleccion->updateMany(
-                array('codigo' => $codigo),
-                array(
-                     '$set'=> array('vendidos' => $pasajeros)
-                ),
-                array('multi' => true)
-            );       
+                $updateResult = $coleccion->updateMany(
+                    array('codigo' => $codigo),
+                    array(
+                         '$set'=> array('vendidos' => $pasajeros)
+                    ),
+                    array('multi' => true)
+                );           
+        
+      
             $nuevoNumPlazas = ($vuelo['plazas_disponibles'] - count($datosViajeros));          
             
             $updateResultDos = $coleccion->updateOne(
@@ -189,6 +197,12 @@ function insertMany($DATA, $coleccion){
             $arrMensaje["dniPagador"] = $dniPagador;
             $arrMensaje["tarjeta"] = $tarjeta;
             $arrMensaje["codigoVenta"] = $codigoVenta;
+            //$arrMensaje["datosBilletes"] = $pasajeros;
+            for ($i=0; $i < count($datosViajeros) ; $i++) { 
+                $pasajeros[$i]['costeBillete'] =  $jsonResponse['vuelos']['0']['costeBillete']; 
+               
+            }
+
             $arrMensaje["datosBilletes"] = $pasajeros;
         } else {
             $arrMensaje["estado"] = false;

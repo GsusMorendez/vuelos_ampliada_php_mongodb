@@ -4,6 +4,7 @@ require 'getFunctions.php';
 
 
 function delete($DATA, $coleccion){
+
     $arrMensaje = array();   
 
     if (isset($DATA['codigo']) && isset($DATA['dni'])  && isset($DATA['codigoVenta'])) {
