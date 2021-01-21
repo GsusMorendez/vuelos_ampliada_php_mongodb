@@ -2,9 +2,19 @@
 
 require 'vendor/autoload.php'; // incluir lo bueno de Composer
 
+require 'auxiliar.php';
+
 $arrMensajeRespuesta = array();
 
 function funcionesGet($coleccion){
+
+    try {
+        $resultado = $coleccion->find();
+    } catch (Exception $e) {
+        echo mensajeExcepcion();
+        die();
+    }
+
 
     if(!isset($_GET['fecha']) && !isset($_GET['origen']) && !isset($_GET['destino'])){
         //echo "TODOS MIS VUELOS";
@@ -55,15 +65,10 @@ function funcionesGet($coleccion){
 
 
 function mostrarTodos($coleccion){
-
- 
     try {
         $resultado = $coleccion->find();
     } catch (Exception $e) {
-        $arrMensaje["estado"] = false;
-        $arrMensaje["mensaje"] = "Error al conectarse a mongodb";
-        $mensajeJSON = json_encode($arrMensaje,JSON_PRETTY_PRINT);
-        return $mensajeJSON; 
+        echo mensajeExcepcion();
         die();
     }
     $contador = 0;
@@ -101,7 +106,13 @@ function mostrarTodos($coleccion){
 function busquedaPorFiltros($coleccion, $arrayParametros){
 
    // db.vuelos.find({"fecha": "2020-12-17", "origen":"MADRID", "destino":"MURCIA"}).pretty()
-    $resultado = $coleccion->find($arrayParametros);
+ 
+    try {
+        $resultado = $coleccion->find($arrayParametros);
+    } catch (Exception $e) {
+        echo mensajeExcepcion();
+        die();
+    }
     $misVuelos= array();
     $contador = 0;
     

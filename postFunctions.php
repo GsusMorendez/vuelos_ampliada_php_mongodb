@@ -1,8 +1,11 @@
 <?php
 require 'getFunctions.php';
 
-function funcionesPost($DATA, $coleccion){
 
+
+
+function funcionesPost($DATA, $coleccion){
+    
     if (isset($DATA['datosViajeros'])) {
        insertMany($DATA, $coleccion);
     }else {
@@ -144,13 +147,15 @@ function insertMany($DATA, $coleccion){
                 $asientosRestantes[] = $i;
             }         
             
-            $updateResult = $coleccion->updateMany(
-                array('codigo' => $codigo),
-                array(
-                     '$set'=> array('vendidos' => $pasajeros)
-                ),
-                array('multi' => true)
-            );       
+                $updateResult = $coleccion->updateMany(
+                    array('codigo' => $codigo),
+                    array(
+                         '$set'=> array('vendidos' => $pasajeros)
+                    ),
+                    array('multi' => true)
+                );           
+        
+      
             $nuevoNumPlazas = ($vuelo['plazas_disponibles'] - count($datosViajeros));          
             
             $updateResultDos = $coleccion->updateOne(

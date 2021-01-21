@@ -1,7 +1,8 @@
 <?php
+require 'auxiliar.php';
 
 function put($_DATA, $coleccion){
-    $arrMensaje = array();    
+    $arrMensaje = array();   
 
     if (isset($_DATA['codigo']) && isset($_DATA['dni']) && isset($_DATA['dniNuevo']) && isset($_DATA['codigoVenta']) && isset($_DATA['nombre']) && isset($_DATA['apellido'])) {
              
