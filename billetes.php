@@ -6,8 +6,6 @@ $arrMensajeRespuesta = array();
 
 
 
-//falta añadir la funcion corregir data por si llega mal
-
 if($primerCaracter == '{'){ 
     $_DATA = json_decode($recibido, true);
     

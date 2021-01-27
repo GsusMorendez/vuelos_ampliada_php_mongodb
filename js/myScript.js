@@ -1,6 +1,6 @@
 /* Configuración (rutas y +) */
 
-var miRuta = "http://localhost/ADAT/tareasEntregadas/ADAT_UD4_A04_VuelosAmpliadaCS-ADAT_UD4_A04_VuelosAmpliadaCS_Jesus_Alejandra-master/billetes.php";
+var miRuta = "billetes.php";
 
 //miRuta = prompt ("Copia y pega la ruta de tu 'puerta de entrada'");
 
